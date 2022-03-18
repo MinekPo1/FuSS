@@ -113,3 +113,21 @@ merge stdio
 
 print("hello again!")
 ```
+
+To create a namespace, use the `static namespace` keyword, followed by the namespace name, after which the namespace body in square brackets should be placed.
+
+```FuSS
+static namespace Namespace [
+	static macro int a 40
+]
+```
+
+## Naming
+
+Function, macro and namespace names can contain:
+
+- lower and upercase letters
+- numbers, aside from the first character
+- underscores
+
+Names of functions and macros **MAY NOT** overlap.
