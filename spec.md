@@ -63,6 +63,8 @@ f(1,2,3)
 ```
 
 To access the service value of a function, the function name is used.
+Note that the service value of a function can be gathered directly after calling it.
+
 
 ## Defining functions
 
@@ -98,7 +100,7 @@ To import a library place the library name in between `<` and `>`.
 The library serves as a namespace, hence the macros and functions defined within can be accessed with a dot.
 
 ```FuSS
-<stdio>
+<sysio>
 
 stdio.print("hello world!")
 ```
@@ -108,8 +110,8 @@ After the keyword, the namepace you wish to merge is placed.
 Optionaly this may be followed by the `to` keyword and another namespace to combine those two namespaces. Otherwise the namespace is merged with the defult namespace.
 
 ```FuSS
-<stdio>
-merge stdio
+<sysio>
+merge sysio
 
 print("hello again!")
 ```
