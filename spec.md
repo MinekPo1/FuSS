@@ -10,15 +10,28 @@ There are three types in FoSS:
 - `num`
 - `str`
 
-Here are all the ways to create a literals:
+`void` literals can take the form of `null` or `NULL`
 
-| type |    pattern    | example |
-|:-----|:-------------:|--------:|
-|`void`| `(NULL|null)` |   `NULL`|
-|`num` |     `\d+`     |  `12345`|
-|`num` |   `\d+.\d+`   |  `12.34`|
-|`num` |`(true|false)` |   `true`|
-|`str` |`"([^"]|\\")*"`| `"abcd"`|
+`num` literals can take the form of
+
+- `true` or `false` (equal to `1` and `~1`)
+- an integer (`123` for example)
+- a decimal (`123.456` for example)
+
+Simple `str` literals can be made by encapsulating some characters with quote marks (`"abc"` for example)
+
+Multi line `str` literals begin with `*"`, each line must begin with a quote and ends with `"*`
+
+For example
+
+```FuSS
+*"This is a multi line string literal
+ "Yay
+ "Isn't this great?
+ "*
+```
+
+Since FuSS has no comments, string literals are used as comments.
 
 In expressions, these literals, along with functions and macros, can be commbined with operators:
 
@@ -27,22 +40,22 @@ In expressions, these literals, along with functions and macros, can be commbine
 | `+`      | `num` | `num` | adds the two numbers
 | `-`      | `num` | `num` | subtracts the left number from the right one
 | `*`      | `num` | `num` | multiplies the two numbers
-| `:`      | `num` | `num` | devides the two numbers
-| `;`      | `num` | `num` | gets the reminder of the devision of the two numbers
+| `:`      | `num` | `num` | divides the two numbers
+| `;`      | `num` | `num` | gets the reminder of the division of the two numbers
 | `&`      | `num` | `num` | preforms the bitwise and on the two numbers
 | `|`      | `num` | `num` | preforms the bitwise or on the two numbers
 | `^`      | `num` | `num` | preforms the bitwise xor on the two numbers
 | `~`      |   -   | `num` | negates the left number
-| `<`      | `num` | `num` | if the left number is grater than the right the expression can be simpilfied to 1, else it can be simplifed to -1
-| `>`      | `num` | `num` | if the right number is grater than the left the expression can be simpilfied to 1, else it can be simplifed to -1
-| `=`      | `num` | `num` | if the right number is equal than the left the expression can be simpilfied to 1, else it can be simplifed to -1
-| `.`      | `str` | `str` | joins the two strings
+| `<`      | `num` | `num` | if the left number is grater than the right the expression can be simplified to 1, else it can be simplified to -1
+| `>`      | `num` | `num` | if the right number is grater than the left the expression can be simplified to 1, else it can be simplified to -1
+| `=`      | `num` | `num` | if the right number is equal than the left the expression can be simplified to 1, else it can be simplified to -1
+| `%`      | `str` | `str` | joins the two strings
 | `#`      | `str` | `str` | if the string are equal simplify to 1 else to -1
-| `{`      | `str` | `num` | simplyfy to only the character with the index defined by the number from the string and every character after that
-| `}`      | `str` | `num` | simplyfy to only the character with the index defined by the number from the string and every character before that
-| `@`      | `str` |   -   | simplyfy to the lenght of the string as a number
-| `?`      | `num` | `str` | if the number is positive, simplyfy to the string. Else simplify to a empty string.
-| `\`      | `num` | `num` | if the right number is positive, simplyfy to the left number. Else simplify to 0.
+| `{`      | `str` | `num` | simplify to only the character with the index defined by the number from the string and every character after that
+| `}`      | `str` | `num` | simplify to only the character with the index defined by the number from the string and every character before that
+| `@`      | `str` |   -   | simplify to the length of the string as a number
+| `?`      | `num` | `str` | if the number is positive, simplify to the string. Else simplify to a empty string.
+| `\`      | `num` | `num` | if the right number is positive, simplify to the left number. Else simplify to 0.
 
 Operators are preformed left to right.
 
@@ -56,7 +69,7 @@ A function is called as you would expect: by following the function name with br
 f()
 ```
 
-Inside of the brackets arguments may be passed, split by collons.
+Inside of the brackets arguments may be passed, split by colons.
 
 ```FuSS
 f(1,2,3)
@@ -64,7 +77,6 @@ f(1,2,3)
 
 To access the service value of a function, the function name is used.
 Note that the service value of a function can be gathered directly after calling it.
-
 
 ## Defining functions
 
@@ -77,12 +89,41 @@ To serve a value, the `serve` keyword is used.
 
 ```FuSS
 static func num f(num a 1, num b 2, num c 3)[
-	serve a + b + c
+        serve a + b + c
 ]
 ```
 
 Functions may have multible definitions which differ by the argument count and type.
 
+Functions can also serve members. To do so a member must first be defined. This is done by adding an arrow `->` after the brackets, but before the body, followed by a member definition.
+A members definition is first the type, followed by the member name, and the optional defalt value. Each member definition must be on its own line.
+All members with out default values must be served before the function serves.
+If a function serves the type void, the function serves if all mambers have been served.
+To serve a member, the `to` keyword follows the serve statement, itself being followed by the member name.
+
+```FuSS
+static func num f2(num a 1, num b 2, num c 3)
+        -> num a
+        -> num b
+        -> num c
+[
+        serve a to a
+        serve b to b
+        serve c to c
+]
+```
+
+To get the value of a member, the function name is followed by the member name split with a dot.
+
+```FuSS
+f2(2,3,4)
+
+f2
+"9"
+
+f2.a
+"2"
+```
 
 ## Defining macros
 
@@ -91,6 +132,49 @@ A macro is created by first placing the `static macro`, followed by the macros t
 
 ```FuSS
 static macro num a 10
+```
+
+A macro can hold multiple values, if it has a `multi` keyword before the `macro` keyword.
+To add new values, repeat the macro definition.
+
+```FuSS
+static multi macro num b 1
+static multi macro num b 2
+static multi macro num b 3
+static multi macro num b 4
+```
+
+Every line with a multi macro will be duplicated, for each value to be used.
+
+```FuSS
+f(b)
+"f will be called with the argument 1, then 2, 3 and 4"
+```
+
+NOTE: Macros are not constant variables, their value is calculated every time they are used.
+
+```FuSS
+static macro num c f()
+c + c
+"f is called twice"
+```
+
+## Structures
+
+To definie a structure first the `static structure` keywords are used followed by the main structure type and name.
+Then members are defined, alike function members.
+
+```FuSS
+static structure int Struct
+        -> int a
+        -> int b
+        -> int c
+```
+
+To define a macro of type or function serving a structure, place `structure <name>` instead of the type.
+
+```FuSS
+static macro structure Struct d
 ```
 
 ## Importing and namespaces
@@ -106,8 +190,8 @@ stdio.print("hello world!")
 ```
 
 If you wish to merge a imported, or created namespace, the `merge` keyword is used.
-After the keyword, the namepace you wish to merge is placed.
-Optionaly this may be followed by the `to` keyword and another namespace to combine those two namespaces. Otherwise the namespace is merged with the defult namespace.
+After the keyword, the namespace you wish to merge is placed.
+Optionally this may be followed by the `to` keyword and another namespace to combine those two namespaces. Otherwise the namespace is merged with the default namespace.
 
 ```FuSS
 <sysio>
@@ -120,15 +204,15 @@ To create a namespace, use the `static namespace` keyword, followed by the names
 
 ```FuSS
 static namespace Namespace [
-	static macro int a 40
+        static macro int a 40
 ]
 ```
 
 ## Naming
 
-Function, macro and namespace names can contain:
+Function, macro, namespace and structure names can contain:
 
-- lower and upercase letters
+- lower and uppercase letters
 - numbers, aside from the first character
 - underscores
 
