@@ -1,0 +1,8 @@
+<sysio>
+
+getc()
+
+until ~(getc=0) [
+	putc(getc)
+	getc()
+]

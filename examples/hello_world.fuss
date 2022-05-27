@@ -1,0 +1,3 @@
+<sysio>
+
+stdio.print("hello world!")
