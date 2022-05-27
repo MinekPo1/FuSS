@@ -1,4 +1,4 @@
-# standard library specyfication for FuSS
+# standard library specification for FuSS
 
 ## sysio
 
@@ -35,7 +35,7 @@ if x and y are not intygers, they will be rounded down
 
 ### str toStr(num n, num base)
 
-represent the number as a string 
+represent the number as a string
 
 ### num fromStr(str s, num base)
 
@@ -44,3 +44,17 @@ convert the string to a number
 ### str replace(str s, str old, str new)
 
 serve a copy of s with every instance of old replaced with new
+
+## sysmath
+
+### num abs(num n)
+
+If n is negative, serve ~n, otherwise serve n
+
+### num sqrt(num n)
+
+Serve the square root of n
+
+### num pow(num n, num p)
+
+Serve n to the power of p

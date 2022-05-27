@@ -1,4 +1,4 @@
-# Spefification
+# Specification
 
 Commands in FoSS are split with newlines.
 
@@ -33,7 +33,7 @@ For example
 
 Since FuSS has no comments, string literals are used as comments.
 
-In expressions, these literals, along with functions and macros, can be commbined with operators:
+In expressions, these literals, along with functions and macros, can be combined with operators:
 
 | operator | rtype | ltype | note |
 | :------- | :---: | :---: | :--- |
@@ -59,6 +59,8 @@ In expressions, these literals, along with functions and macros, can be commbine
 
 Operators are preformed left to right.
 
+You can also use brackets to group expressions.
+
 ## Calling functions
 
 The only way to store data in FoSS is via functions.
@@ -80,8 +82,8 @@ Note that the service value of a function can be gathered directly after calling
 
 ## Defining functions
 
-A function definition starts with the `static func` keyword. After that, the function service type and name is specified, with the type being first, followed by brackets, in which arguments may be specified, with the argument types and names in them, seperated by commas. Argument types preceed their names and are seperated by one or more spaces.
-If a argument has a defult value, after its name, the value is placed, prefixed by one or more space.
+A function definition starts with the `static func` keyword. After that, the function service type and name is specified, with the type being first, followed by brackets, in which arguments may be specified, with the argument types and names in them, separated by commas. Argument types precede their names and are separated by one or more spaces.
+If a argument has a default value, after its name, the value is placed, prefixed by one or more space.
 
 After the brackets the body is placed, surrounded by square brackets.
 
@@ -93,12 +95,12 @@ static func num f(num a 1, num b 2, num c 3)[
 ]
 ```
 
-Functions may have multible definitions which differ by the argument count and type.
+Functions may have multiple definitions which differ by the argument count and type.
 
 Functions can also serve members. To do so a member must first be defined. This is done by adding an arrow `->` after the brackets, but before the body, followed by a member definition.
-A members definition is first the type, followed by the member name, and the optional defalt value. Each member definition must be on its own line.
+A members definition is first the type, followed by the member name, and the optional default value. Each member definition must be on its own line.
 All members with out default values must be served before the function serves.
-If a function serves the type void, the function serves if all mambers have been served.
+If a function serves the type void, the function serves if all members have been served.
 To serve a member, the `to` keyword follows the serve statement, itself being followed by the member name.
 
 ```FuSS
@@ -110,6 +112,7 @@ static func num f2(num a 1, num b 2, num c 3)
         serve a to a
         serve b to b
         serve c to c
+        serve a + b + c
 ]
 ```
 
@@ -125,9 +128,11 @@ f2.a
 "2"
 ```
 
+Note that in this case the function returns a structure. See [Structures](#structures) for more information.
+
 ## Defining macros
 
-If you with to spefify a value with out defining a function, a macro may be used.
+If you with to specify a value with out defining a function, a macro may be used.
 A macro is created by first placing the `static macro`, followed by the macros type and the name of the macro.
 
 ```FuSS
@@ -159,22 +164,56 @@ c + c
 "f is called twice"
 ```
 
+## `until` loop
+
+```FuSS
+until c [
+        "code"
+]
+
+```
+
+The `until` loop will execute the code in the brackets until the condition is:
+
+- a non empty string
+- a positive number
+
 ## Structures
 
-To definie a structure first the `static structure` keywords are used followed by the main structure type and name.
+To define a structure first the `static structure` keywords are used followed by the main structure type and name.
 Then members are defined, alike function members.
 
 ```FuSS
-static structure int Struct
-        -> int a
-        -> int b
-        -> int c
+static structure num Struct
+        -> num a
+        -> num b
+        -> num c
 ```
 
 To define a macro of type or function serving a structure, place `structure <name>` instead of the type.
 
 ```FuSS
 static macro structure Struct d
+```
+
+Structures which have the same member name and types are assumed to be equal.
+
+If a function is marked as serving a structure it has to serve all members of the structure.
+If the function defines its own members, the returned structure will be different from the one marked.
+
+```FuSS
+static func structure Struct f_s()
+        -> num d
+[
+        serve 1 to a
+        serve 2 to b
+        serve 3 to c
+        serve 4 to d
+        serve 5
+]
+
+static macro structure Struct d f_s
+"^ type error"
 ```
 
 ## Importing and namespaces
